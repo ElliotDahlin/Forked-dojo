@@ -50,33 +50,74 @@ namespace Infrastructure_Layer.Repositories.Course
             throw new NotImplementedException();
         }
 
-        public Task<List<CourseModel>> GetCoursesBySearchCriteria(SearchCriteriaDTO searchCriteriaInfo)
+        public async Task<List<CourseModel>> GetCoursesBySearchCriteria(SearchCriteriaDTO searchCriteria)
         {
-            
+            try
+            {
+                // Trim and check if search criteria are not empty or whitespace
+                var courseId = searchCriteria.CourseId?.Trim();
+                var title = searchCriteria.Title?.Trim();
+                var categoryOrSubject = searchCriteria.CategoryOrSubject?.Trim();
+                var language = searchCriteria.Language?.Trim();
+                var firstName = searchCriteria.FirstName?.Trim();
+                var lastName = searchCriteria.LastName?.Trim();
+
+                // Combine first and last name for the user search
+                var fullName = $"{firstName} {lastName}".Trim();
+
+                //if there is no search criteria we are returning all courses
+                if (string.IsNullOrWhiteSpace(courseId) &&
+                    string.IsNullOrWhiteSpace(title) &&
+                    string.IsNullOrWhiteSpace(categoryOrSubject) &&
+                    string.IsNullOrWhiteSpace(language) &&
+                    string.IsNullOrWhiteSpace(fullName))
+                {
+                    return _dojoDBContext.CourseModel.ToList();
+                }
+                var searchedList = await (from course in _dojoDBContext.CourseModel
+                                          join user in _dojoDBContext.User on course.UserId equals user.Id
+                                          where (course.CourseId.Equals(courseId) || course.Title.Equals(title) ||
+                                                 course.CategoryOrSubject.Equals(categoryOrSubject) || course.Language.Equals(language) ||
+                                                (user.FirstName + " " + user.LastName).Equals(fullName))
+                                          select course).ToListAsync();
+
+                if (!searchedList.Any())
+                {
+
+                    throw new InvalidOperationException("No courses found matching the search term.");
+                }
+
+                return searchedList;
+            }
+            catch (Exception ex)
+            {
+                // Consider logging the exception here
+                throw new Exception($"An error occurred while fetching courses: {ex.Message}", ex);
+            }
+
+            //public async Task<List<CourseModel>> GetCoursesBySearchCriteria(string searchCriteria)
+            //{
+            //    try
+            //    {
+            //        var searchedList = await (from course in _dojoDBContext.CourseModel
+            //                                  join user in _dojoDBContext.User on course.UserId equals user.Id
+            //                                  where course.CourseId.Contains(searchCriteria) || course.Title.Contains(searchCriteria) ||
+            //                                  course.Language.Contains(searchCriteria) ||
+            //                                  (user.FirstName + " " + user.LastName).Contains(searchCriteria)
+            //                                  select course).ToListAsync();
+
+            //        if (!searchedList.Any())
+            //        {
+            //            throw new Exception($"There were no courses with the searched criteria: {searchCriteria} in the database");
+            //        }
+
+            //        return searchedList;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        throw new Exception($"An error occurred while getting courses with criteria: {searchCriteria} from the database", ex);
+            //    }
+            //}
         }
-
-        //public async Task<List<CourseModel>> GetCoursesBySearchCriteria(string searchCriteria)
-        //{
-        //    try
-        //    {
-        //        var searchedList = await (from course in _dojoDBContext.CourseModel
-        //                                  join user in _dojoDBContext.User on course.UserId equals user.Id
-        //                                  where course.CourseId.Contains(searchCriteria) || course.Title.Contains(searchCriteria) ||
-        //                                  course.Language.Contains(searchCriteria) ||
-        //                                  (user.FirstName + " " + user.LastName).Contains(searchCriteria)
-        //                                  select course).ToListAsync();
-
-        //        if (!searchedList.Any())
-        //        {
-        //            throw new Exception($"There were no courses with the searched criteria: {searchCriteria} in the database");
-        //        }
-
-        //        return searchedList;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception($"An error occurred while getting courses with criteria: {searchCriteria} from the database", ex);
-        //    }
-        //}
     }
 }
