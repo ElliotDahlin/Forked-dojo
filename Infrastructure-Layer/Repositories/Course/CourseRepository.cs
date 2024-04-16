@@ -1,4 +1,5 @@
-﻿using Domain_Layer.Models.CourseModel;
+﻿using Application_Layer.DTO_s;
+using Domain_Layer.Models.CourseModel;
 using Infrastructure_Layer.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -47,6 +48,11 @@ namespace Infrastructure_Layer.Repositories.Course
                 throw new Exception($"An error occured while getting a course with Id {courseId} from database", ex);
             }
             throw new NotImplementedException();
+        }
+
+        public Task<List<CourseModel>> GetCoursesBySearchCriteria(SearchCriteriaDTO searchCriteriaInfo)
+        {
+            
         }
 
         //public async Task<List<CourseModel>> GetCoursesBySearchCriteria(string searchCriteria)

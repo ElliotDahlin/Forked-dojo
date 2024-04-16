@@ -18,20 +18,7 @@ namespace API_Layer.Controllers
         {
             _mediator = mediator;
         }
-        //[HttpGet("SearchCourseBy/{searchCriteria}")]
-        //public async Task<IActionResult> GetAllCourses(string searchCriteria)
-        //{
-        //    try
-        //    {
-        //        return Ok(await _mediator.Send(new GetAllCoursesBySearchCriteriaQuery(searchCriteria)));
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-
-        //}
         [HttpPost("SearchCourseBy")]
         public async Task<IActionResult> GetAllCourses([FromBody] SearchCriteriaDTO searchCriteria)
         {
