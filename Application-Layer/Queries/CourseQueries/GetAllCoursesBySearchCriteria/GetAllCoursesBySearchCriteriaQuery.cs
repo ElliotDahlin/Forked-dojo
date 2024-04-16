@@ -1,14 +1,15 @@
-﻿using Domain_Layer.Models.CourseModel;
+﻿using Application_Layer.DTO_s;
+using Domain_Layer.Models.CourseModel;
 using MediatR;
 
 namespace Application_Layer.Queries.CourseQueries.GetAllCoursesBySearchCriteria
 {
     public class GetAllCoursesBySearchCriteriaQuery : IRequest<List<CourseModel>>
     {
-        public string SearchCriteria { get; private set; }
-        public GetAllCoursesBySearchCriteriaQuery(string _searchCriteria)
+        public SearchCriteriaDTO SearchCriteriaInfo { get; }
+        public GetAllCoursesBySearchCriteriaQuery(SearchCriteriaDTO _searchCriteria)
         {
-            SearchCriteria = _searchCriteria;
+            SearchCriteriaInfo = _searchCriteria;
         }
     }
 }

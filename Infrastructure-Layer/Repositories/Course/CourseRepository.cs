@@ -49,28 +49,28 @@ namespace Infrastructure_Layer.Repositories.Course
             throw new NotImplementedException();
         }
 
-        public async Task<List<CourseModel>> GetCoursesBySearchCriteria(string searchCriteria)
-        {
-            try
-            {
-                var searchedList = await (from course in _dojoDBContext.CourseModel
-                                          join user in _dojoDBContext.User on course.UserId equals user.Id
-                                          where course.CourseId.Contains(searchCriteria) || course.Title.Contains(searchCriteria) ||
-                                          course.Language.Contains(searchCriteria) ||
-                                          (user.FirstName + " " + user.LastName).Contains(searchCriteria)
-                                          select course).ToListAsync();
+        //public async Task<List<CourseModel>> GetCoursesBySearchCriteria(string searchCriteria)
+        //{
+        //    try
+        //    {
+        //        var searchedList = await (from course in _dojoDBContext.CourseModel
+        //                                  join user in _dojoDBContext.User on course.UserId equals user.Id
+        //                                  where course.CourseId.Contains(searchCriteria) || course.Title.Contains(searchCriteria) ||
+        //                                  course.Language.Contains(searchCriteria) ||
+        //                                  (user.FirstName + " " + user.LastName).Contains(searchCriteria)
+        //                                  select course).ToListAsync();
 
-                if (!searchedList.Any())
-                {
-                    throw new Exception($"There were no courses with the searched criteria: {searchCriteria} in the database");
-                }
+        //        if (!searchedList.Any())
+        //        {
+        //            throw new Exception($"There were no courses with the searched criteria: {searchCriteria} in the database");
+        //        }
 
-                return searchedList;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"An error occurred while getting courses with criteria: {searchCriteria} from the database", ex);
-            }
-        }
+        //        return searchedList;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception($"An error occurred while getting courses with criteria: {searchCriteria} from the database", ex);
+        //    }
+        //}
     }
 }
