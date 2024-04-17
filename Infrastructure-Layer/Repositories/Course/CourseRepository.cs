@@ -12,13 +12,6 @@ namespace Infrastructure_Layer.Repositories.Course
         {
             _dojoDBContext = dojoDBContext;
         }
-
-        public async Task AddCourseAsync(CourseModel course)
-        {
-            _dojoDBContext.CourseModel.Add(course);
-            await _dojoDBContext.SaveChangesAsync();
-        }
-
         public async Task DeleteCourseByIdAsync(string courseId)
         {
             var course = await _dojoDBContext.CourseModel.FindAsync(courseId);
@@ -49,8 +42,18 @@ namespace Infrastructure_Layer.Repositories.Course
             }
             throw new NotImplementedException();
         }
-        
+        public async Task<bool> UpdateCourseAsync(CourseModel courseToUpdate)
+        {
+            _dojoDBContext.CourseModel.Update(courseToUpdate);
+            await _dojoDBContext.SaveChangesAsync();
 
+            return true;
+        }
+        public async Task AddCourseAsync(CourseModel course)
+        {
+            _dojoDBContext.CourseModel.Add(course);
+            await _dojoDBContext.SaveChangesAsync();
+        }
         public async Task<List<CourseModel>> GetCoursesBySearchCriteria(SearchCriteria searchCriteria)
         {
             try
@@ -94,14 +97,6 @@ namespace Infrastructure_Layer.Repositories.Course
                 // Consider logging the exception here
                 throw new Exception($"An error occurred while fetching courses: {ex.Message}", ex);
             }
-        }
-
-        public async Task<bool> UpdateCourseAsync(CourseModel courseToUpdate)
-        {
-            _dojoDBContext.CourseModel.Update(courseToUpdate);
-            await _dojoDBContext.SaveChangesAsync();
-
-            return true;
         }
     }
 }
