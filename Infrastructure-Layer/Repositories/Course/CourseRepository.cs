@@ -96,9 +96,10 @@ namespace Infrastructure_Layer.Repositories.Course
             }
         }
 
-        public Task<bool> UpdateCourseAsync(CourseModel courseToUpdate)
-        {
-            throw new NotImplementedException();
-        }
+        //public async Task<bool> UpdateCourseAsync(CourseModel courseToUpdate)
+        //{
+        //    _dojoDBContext.CourseModel.Update(courseToUpdate);
+        //    await _dojoDBContext.SaveChangesAsync();
+        //}
     }
 }
