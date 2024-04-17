@@ -48,6 +48,13 @@ namespace Infrastructure_Layer.Repositories.Course
             }
             throw new NotImplementedException();
         }
+        public async Task<bool> UpdateCourseAsync(CourseModel courseToUpdate)
+        {
+            _dojoDBContext.CourseModel.Update(courseToUpdate);
+            await _dojoDBContext.SaveChangesAsync();
+
+            return true;
+        }
 
         public async Task<List<CourseModel>> GetCoursesBySearchCriteria(SearchCriteria searchCriteria)
         {
