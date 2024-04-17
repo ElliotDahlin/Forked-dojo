@@ -69,22 +69,22 @@ namespace Infrastructure_Layer.Repositories.Course
                 {
                     return _dojoDBContext.CourseModel.ToList();
                 }
-                
-                
-                    var searchedList = await (from course in _dojoDBContext.CourseModel
-                                              join user in _dojoDBContext.User on course.UserId equals user.Id
-                                              where (course.CourseId.Equals(courseId) || course.Title.Equals(title) ||
-                                                     course.CategoryOrSubject.Equals(categoryOrSubject) || course.Language.Equals(language) ||
-                                                    (user.FirstName + " " + user.LastName).Equals(fullName))
-                                              select course).ToListAsync();
-                    if (!searchedList.Any())
-                    {
 
-                        throw new InvalidOperationException("No courses found matching the search term.");
-                    }
 
-                    return searchedList;
-               
+                var searchedList = await (from course in _dojoDBContext.CourseModel
+                                          join user in _dojoDBContext.User on course.UserId equals user.Id
+                                          where (course.CourseId.Equals(courseId) || course.Title.Equals(title) ||
+                                                 course.CategoryOrSubject.Equals(categoryOrSubject) || course.Language.Equals(language) ||
+                                                (user.FirstName + " " + user.LastName).Equals(fullName))
+                                          select course).ToListAsync();
+                if (!searchedList.Any())
+                {
+
+                    throw new InvalidOperationException("No courses found matching the search term.");
+                }
+
+                return searchedList;
+
 
             }
             catch (Exception ex)

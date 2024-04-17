@@ -18,7 +18,7 @@ namespace Application_Layer.Queries.CourseQueries.GetAllCoursesBySearchCriteria
             RuleFor(course => course.SearchCriteriaInfo.FirstName)!
                 .MustBeValidSearchTerm();
             RuleFor(course => course.SearchCriteriaInfo.LastName)!
-                .MustBeValidSearchTerm();        
+                .MustBeValidSearchTerm();
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Test_Layer.CourseTest.UnitTest.CourseQueryTests
             var courseId = new Guid().ToString();
             var courseId2 = "08260480-52a0-4c0e-a588-274101a2c3be";
             var category = "ASP.NET";
-            _searchCriteria = new SearchCriteria() { CategoryOrSubject = category};
+            _searchCriteria = new SearchCriteria() { CategoryOrSubject = category };
             var allCourses = new List<CourseModel>()
             {
               new CourseModel { CourseId = courseId, CategoryOrSubject = category, CourseIsCompleted = true, Language = "English" },
