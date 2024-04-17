@@ -13,9 +13,10 @@ namespace Infrastructure_Layer.Repositories.Course
             _dojoDBContext = dojoDBContext;
         }
 
-        public Task AddCourseAsync(CourseModel course)
+        public async Task AddCourseAsync(CourseModel course)
         {
-            throw new NotImplementedException();
+            _dojoDBContext.CourseModel.Add(course);
+            await _dojoDBContext.SaveChangesAsync();
         }
 
         public async Task DeleteCourseByIdAsync(string courseId)
