@@ -96,10 +96,12 @@ namespace Infrastructure_Layer.Repositories.Course
             }
         }
 
-        //public async Task<bool> UpdateCourseAsync(CourseModel courseToUpdate)
-        //{
-        //    _dojoDBContext.CourseModel.Update(courseToUpdate);
-        //    await _dojoDBContext.SaveChangesAsync();
-        //}
+        public async Task<bool> UpdateCourseAsync(CourseModel courseToUpdate)
+        {
+            _dojoDBContext.CourseModel.Update(courseToUpdate);
+            await _dojoDBContext.SaveChangesAsync();
+
+            return true;
+        }
     }
 }
