@@ -2,6 +2,7 @@
 using Application_Layer.Queries.CourseQueries.GetAllCoursesBySearchCriteria;
 using Domain_Layer.Models.CourseModel;
 using FakeItEasy;
+using Infrastructure_Layer.Repositories.Course;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,7 @@ namespace Test_Layer.CourseTest.IntegrationTest
     {
         private IMediator _mediator;
         private CourseController _controller;
+        private SearchCriteria? _searchCriteria;
 
         [SetUp]
         public void Setup()
@@ -24,7 +26,7 @@ namespace Test_Layer.CourseTest.IntegrationTest
         public async Task GetAllCourses_ReturnsOkResult_WithCourses()
         {
             // Arrange
-            var searchCriteria = "English";
+            _searchCriteria = new SearchCriteria() { Language = "English" };
             var courseId = Guid.NewGuid().ToString();
             var allCourses = new List<CourseModel>
             {
@@ -32,14 +34,14 @@ namespace Test_Layer.CourseTest.IntegrationTest
                 new CourseModel { CourseId = "2", CategoryOrSubject = "ASP.NET", Title = "Test Course 2", Language = "Spanish" }
             };
             var expectedCourses = allCourses.Where(c => c.Language == "English").ToList();
-            var query = new GetAllCoursesBySearchCriteriaQuery(searchCriteria);
+            var query = new GetAllCoursesBySearchCriteriaQuery(_searchCriteria);
 
             // Setup the mediator to return the expected courses when the query is sent
-            A.CallTo(() => _mediator.Send(A<GetAllCoursesBySearchCriteriaQuery>.That.Matches(q => q.SearchCriteria == searchCriteria), A<CancellationToken>.Ignored))
+            A.CallTo(() => _mediator.Send(A<GetAllCoursesBySearchCriteriaQuery>.That.Matches(q => q.SearchCriteriaInfo == _searchCriteria), A<CancellationToken>.Ignored))
                 .Returns(expectedCourses);
 
             // Act
-            var result = await _controller.GetAllCourses(searchCriteria);
+            var result = await _controller.GetAllCourses(_searchCriteria);
 
             // Assert
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -54,14 +56,14 @@ namespace Test_Layer.CourseTest.IntegrationTest
         public async Task GetAllCourses_ReturnsBadRequest_WhenExceptionOccurs()
         {
             // Arrange
-            var searchCriteria = "test-criteria";
+            _searchCriteria = new SearchCriteria() { Language = "FakeInput" };
             var exceptionMessage = "An error occurred.";
 
-            A.CallTo(() => _mediator.Send(A<GetAllCoursesBySearchCriteriaQuery>.That.Matches(q => q.SearchCriteria == searchCriteria), default))
+            A.CallTo(() => _mediator.Send(A<GetAllCoursesBySearchCriteriaQuery>.That.Matches(q => q.SearchCriteriaInfo == _searchCriteria), default))
                 .Throws(new Exception(exceptionMessage));
 
             // Act
-            var result = await _controller.GetAllCourses(searchCriteria);
+            var result = await _controller.GetAllCourses(_searchCriteria);
 
             // Assert
             Assert.IsInstanceOf<BadRequestObjectResult>(result);

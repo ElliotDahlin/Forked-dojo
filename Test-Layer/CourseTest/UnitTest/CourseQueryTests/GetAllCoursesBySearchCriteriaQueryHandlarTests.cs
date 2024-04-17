@@ -12,6 +12,7 @@ namespace Test_Layer.CourseTest.UnitTest.CourseQueryTests
 
         private ICourseRepository _courseRepository;
         private GetAllCoursesBySearchCriteriaQueryHandler _handler;
+        private SearchCriteria? _searchCriteria;
 
         [SetUp]
         public void SetUp()
@@ -24,19 +25,18 @@ namespace Test_Layer.CourseTest.UnitTest.CourseQueryTests
         public async Task Handle_SearchCriteria_ValidCourseId_ReturnsCourse()
         {
             // Arrange
-            var courseId = new Guid().ToString();
-            var courseId2 = "08260480-52a0-4c0e-a588-274101a2c3be";
+            _searchCriteria = new SearchCriteria() { CourseId = "08260479-52a0-4c0e-a588-274101a2c3be" };
             var allCourses = new List<CourseModel>()
             {
-              new CourseModel { CourseId = courseId, CategoryOrSubject = "ASP.NET", CourseIsCompleted = true, Language = "English" },
-              new CourseModel { CourseId = courseId2 , CategoryOrSubject = "React", CourseIsCompleted = true, Language = "German" }
+              new CourseModel { CourseId = "08260479-52a0-4c0e-a588-274101a2c3be", CategoryOrSubject = "ASP.NET", CourseIsCompleted = true, Language = "English" },
+              new CourseModel { CourseId = "08260480-52a0-4c0e-a588-274101a2c3be" , CategoryOrSubject = "React", CourseIsCompleted = true, Language = "German" }
             };
-            var expectedCourse = allCourses.Where(c => c.CourseId == courseId).ToList();
-            var query = new GetAllCoursesBySearchCriteriaQuery(courseId);
+            var expectedCourse = allCourses.Where(c => c.CourseId == _searchCriteria.CourseId).ToList();
+            var query = new GetAllCoursesBySearchCriteriaQuery(_searchCriteria);
 
             // Adjust the mock setup to return a filtered list based on the search criteria
-            A.CallTo(() => _courseRepository.GetCoursesBySearchCriteria(A<string>.Ignored))
-                .Returns(allCourses.Where(c => c.CourseId == courseId).ToList());
+            A.CallTo(() => _courseRepository.GetCoursesBySearchCriteria(_searchCriteria))
+                .Returns(allCourses.Where(c => c.CourseId == _searchCriteria.CourseId).ToList());
 
             // Act
             var result = await _handler.Handle(query, CancellationToken.None);
@@ -55,16 +55,17 @@ namespace Test_Layer.CourseTest.UnitTest.CourseQueryTests
             var courseId = new Guid().ToString();
             var courseId2 = "08260480-52a0-4c0e-a588-274101a2c3be";
             var category = "ASP.NET";
+            _searchCriteria = new SearchCriteria() { CategoryOrSubject = category};
             var allCourses = new List<CourseModel>()
             {
               new CourseModel { CourseId = courseId, CategoryOrSubject = category, CourseIsCompleted = true, Language = "English" },
               new CourseModel { CourseId = courseId2 , CategoryOrSubject = "React", CourseIsCompleted = true, Language = "German" }
             };
             var expectedCourse = allCourses.Where(c => c.CategoryOrSubject == category).ToList();
-            var query = new GetAllCoursesBySearchCriteriaQuery(category);
+            var query = new GetAllCoursesBySearchCriteriaQuery(_searchCriteria);
 
             // Adjust the mock setup to return a filtered list based on the search criteria
-            A.CallTo(() => _courseRepository.GetCoursesBySearchCriteria(A<string>.Ignored))
+            A.CallTo(() => _courseRepository.GetCoursesBySearchCriteria(_searchCriteria))
                 .Returns(allCourses.Where(c => c.CategoryOrSubject == category).ToList());
 
             // Act
@@ -85,16 +86,17 @@ namespace Test_Layer.CourseTest.UnitTest.CourseQueryTests
             var courseId2 = "08260480-52a0-4c0e-a588-274101a2c3be";
             var category = "ASP.NET";
             var language = "English";
+            _searchCriteria = new SearchCriteria() { Language = language };
             var allCourses = new List<CourseModel>()
             {
               new CourseModel { CourseId = courseId, CategoryOrSubject = category, CourseIsCompleted = true, Language = language },
               new CourseModel { CourseId = courseId2 , CategoryOrSubject = "React", CourseIsCompleted = true, Language = "German" }
             };
             var expectedCourse = allCourses.Where(c => c.Language == language).ToList();
-            var query = new GetAllCoursesBySearchCriteriaQuery(language);
+            var query = new GetAllCoursesBySearchCriteriaQuery(_searchCriteria);
 
             // Adjust the mock setup to return a filtered list based on the search criteria
-            A.CallTo(() => _courseRepository.GetCoursesBySearchCriteria(A<string>.Ignored))
+            A.CallTo(() => _courseRepository.GetCoursesBySearchCriteria(_searchCriteria))
                 .Returns(allCourses.Where(c => c.Language == language).ToList());
 
             // Act
@@ -118,6 +120,7 @@ namespace Test_Layer.CourseTest.UnitTest.CourseQueryTests
             var userId = "08260479-52a0-4c0e-a588-274101a2c3be";
             var firstName = "Bojan";
             var lastName = "Mirkovic";
+            _searchCriteria = new SearchCriteria() { FirstName = firstName, LastName = lastName };
             var allCourses = new List<CourseModel>()
             {
                 new CourseModel { CourseId = courseId, CategoryOrSubject = category, CourseIsCompleted = true, Language = language, UserId = userId },
@@ -132,10 +135,10 @@ namespace Test_Layer.CourseTest.UnitTest.CourseQueryTests
 
             // Simulate the join operation and filter courses based on the full name
             var expectedCourse = allCourses.Where(c => allUsers.Any(u => u.Id == c.UserId && u.FirstName + " " + u.LastName == firstName + " " + lastName)).ToList();
-            var query = new GetAllCoursesBySearchCriteriaQuery(firstName + " " + lastName);
+            var query = new GetAllCoursesBySearchCriteriaQuery(_searchCriteria);
 
             // Adjust the mock setup to return a filtered list based on the search criteria
-            A.CallTo(() => _courseRepository.GetCoursesBySearchCriteria(A<string>.Ignored))
+            A.CallTo(() => _courseRepository.GetCoursesBySearchCriteria(_searchCriteria))
                 .Returns(expectedCourse);
 
             // Act
@@ -152,30 +155,30 @@ namespace Test_Layer.CourseTest.UnitTest.CourseQueryTests
         public void Handle_SearchCriteria_EmptyOrWhitespace_ThrowsArgumentException()
         {
             // Arrange
-            var searchCriteria = "  ";
-            var query = new GetAllCoursesBySearchCriteriaQuery(searchCriteria);
+            var query = new GetAllCoursesBySearchCriteriaQuery(null);
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _handler.Handle(query, CancellationToken.None));
 
             // Assert
-            Assert.That(ex.Message, Does.Contain($"Course with searched criteria: {searchCriteria}, was not found!"));
+            Assert.That(ex.Message, Does.Contain("Course with searched criteria, was not found!"));
         }
         [Test]
         public void Handle_SearchCriteria_NotFound_ThrowsKeyNotFoundException()
         {
             // Arrange
-            var searchCriteria = "NonExistentCourseId";
-            var query = new GetAllCoursesBySearchCriteriaQuery(searchCriteria);
+            var searchCriteriaIsWrong = "NonExistentCourseId";
+            _searchCriteria = new SearchCriteria() { CourseId = searchCriteriaIsWrong };
+            var query = new GetAllCoursesBySearchCriteriaQuery(_searchCriteria);
 
             // Set up the mock repository to return null for the given search criteria
-            A.CallTo(() => _courseRepository.GetCoursesBySearchCriteria(searchCriteria)).Returns(Task.FromResult<List<CourseModel>>(null)); ;
+            A.CallTo(() => _courseRepository.GetCoursesBySearchCriteria(_searchCriteria)).Returns(Task.FromResult<List<CourseModel>>(null)); ;
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _handler.Handle(query, CancellationToken.None));
 
             // Assert
-            Assert.That(ex.Message, Does.Contain($"Course with searched criteria: {searchCriteria}, was not found!"));
+            Assert.That(ex.Message, Does.Contain($"Course with searched criteria, was not found!"));
         }
 
     }

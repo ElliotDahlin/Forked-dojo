@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application_Layer.DTO_s
+namespace Infrastructure_Layer.Repositories.Course
 {
-    public class SearchCriteriaDTO
+    public class SearchCriteria
     {
+        public bool? SearchBySearchTerm { get; set; } = true;
         public string? CourseId { get; set; }
 
         [DataType(DataType.Text)]

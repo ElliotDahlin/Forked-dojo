@@ -3,6 +3,7 @@ using Application_Layer.Commands.CourseCommands.DeleteCourse;
 using Application_Layer.DTO_s;
 using Application_Layer.Queries.CourseQueries.GetAllCoursesBySearchCriteria;
 using Application_Layer.Queries.CourseQueries.GetCourseById;
+using Infrastructure_Layer.Repositories.Course;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,7 @@ namespace API_Layer.Controllers
         }
 
         [HttpPost("SearchCourseBy")]
-        public async Task<IActionResult> GetAllCourses([FromBody] SearchCriteriaDTO searchCriteria)
+        public async Task<IActionResult> GetAllCourses([FromBody] SearchCriteria searchCriteria)
         {
             try
             {

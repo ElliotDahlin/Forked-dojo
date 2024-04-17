@@ -8,21 +8,23 @@ namespace Application_Layer.Queries.CourseQueries.GetAllCoursesBySearchCriteria
     public class GetAllCoursesBySearchCriteriaQueryHandler : IRequestHandler<GetAllCoursesBySearchCriteriaQuery, List<CourseModel>>
     {
         private readonly ICourseRepository _courseRepository;
-        private readonly IMapper _mapper;
-        public GetAllCoursesBySearchCriteriaQueryHandler(ICourseRepository courseRepository, IMapper mapper)
+        public GetAllCoursesBySearchCriteriaQueryHandler(ICourseRepository courseRepository)
         {
             _courseRepository = courseRepository;
-            _mapper = mapper;
         }
 
         public async Task<List<CourseModel>> Handle(GetAllCoursesBySearchCriteriaQuery request, CancellationToken cancellationToken)
         {
+            if (request.SearchCriteriaInfo == null)
+            {
+                throw new ArgumentException("Course with searched criteria, was not found!");
+            }
             // Use the repository to fetch courses based on the search criteria
             var courses = await _courseRepository.GetCoursesBySearchCriteria(request.SearchCriteriaInfo);
-
-            // If you need to transform the data before returning it, you can use AutoMapper
-            // For example, if the repository returns a list of CourseDTOs, you can map them to CourseModels
-            // var courseModels = _mapper.Map<List<CourseModel>>(courses);
+            if (courses == null)
+            {
+                throw new KeyNotFoundException("Course with searched criteria, was not found!");
+            }
 
             // Return the list of courses
             return courses;
