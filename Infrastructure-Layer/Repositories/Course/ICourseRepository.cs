@@ -8,5 +8,6 @@ namespace Infrastructure_Layer.Repositories.Course
         Task AddCourseAsync(CourseModel course);
         Task<CourseModel> GetCourseByIdAsync(string courseId);
         Task<List<CourseModel>> GetCoursesBySearchCriteria(SearchCriteria searchCriteriaInfo);
+        Task<bool> UpdateCourseAsync(CourseModel courseToUpdate);
     }
 }
